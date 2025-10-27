@@ -8,7 +8,7 @@ A production-ready Django REST Framework (DRF) template that demonstrates:
 
 ---
 
-## 🚀 Features
+## Features
 
 - Django 4+ and Django REST Framework
 - PostgreSQL support (via `libpq-dev`)
@@ -21,7 +21,7 @@ A production-ready Django REST Framework (DRF) template that demonstrates:
 
 ---
 
-## 🛠️ Prerequisites
+## Prerequisites
 
 Before you begin, make sure you have the following installed locally:
 
@@ -32,7 +32,7 @@ Before you begin, make sure you have the following installed locally:
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 django-drf-template/
 │
