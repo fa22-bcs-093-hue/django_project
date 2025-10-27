@@ -83,6 +83,38 @@ A custom Django test settings file (`test.py`) is configured to use an **SQLite3
 ### **How it Works**
 
 1. When the pipeline runs, it automatically executes:
-   ```bash
+
    python manage.py test --settings=django_project.config.settings.test
-   ```
+
+2. The tests validate models, serializers, and API endpoints.
+
+3. The workflow fails early if any test case fails, preventing broken builds from being deployed.
+
+Deployment Workflow:
+
+When a new commit is pushed to the main branch:
+
+GitHub Actions automatically runs the pipeline.
+
+The Docker image is built and pushed to DockerHub.
+
+You can deploy the container on any server using:
+
+docker pull <your_dockerhub_username>/django-drf-template:latest
+docker run -d -p 8000:8000 <your_dockerhub_username>/django-drf-template:latest
+
+This ensures zero manual deployment steps and consistent builds across environments.
+
+Lessons Learned:
+
+Building this project offered valuable insights into how DevOps practices enhance software reliability:
+
+Automation is powerful: Replacing manual testing and deployment with GitHub Actions dramatically reduced human error.
+
+Consistency matters: Docker ensures the same environment for developers, testers, and servers.
+
+Security is essential: Managing credentials through GitHub Secrets keeps pipelines safe.
+
+Iterative improvement: Debugging workflow path issues emphasized the importance of correct relative paths and repository structure.
+
+Testing as a gatekeeper: Automated tests act as a safety net, ensuring code integrity before deployment.
