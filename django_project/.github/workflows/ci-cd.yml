@@ -58,7 +58,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest pytest-django pytest-cov flake8 bandit safety
+        pip install pytest pytest-django pytest-cov flake8 bandit pip-audit
         
     - name: Verify installation
       run: |
@@ -86,7 +86,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install flake8 bandit pip-audit isort black
-        pip uninstall safety -y || true
         
     - name: Code formatting check (Black)
       run: |
@@ -109,7 +108,7 @@ jobs:
     - name: Security scan with pip-audit
       run: |
         echo "🔍 Running pip-audit security scan..."
-        pip list | grep -E "(safety|pip-audit)" || echo "No safety/pip-audit found"
+        pip list | grep pip-audit || echo "pip-audit not found"
         pip-audit --format=json --output=safety-report.json || true
         pip-audit --desc || true
         echo "✅ Security scan completed with pip-audit"
