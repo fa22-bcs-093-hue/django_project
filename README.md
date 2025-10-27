@@ -1,101 +1,52 @@
-# Django (DRF) Dockerized Project Template
+# Django DRF Template
 
-This repository serves as a template for creating a Django REST Framework (DRF) project that is containerized using Docker. It provides a structured starting point for developing Django-based web applications with a RESTful API, allowing for easier setup and deployment.
+A production-ready Django REST Framework (DRF) template that demonstrates:
 
-## Features
+- Containerization with **Docker**
+- Continuous Integration and Deployment (CI/CD) with **GitHub Actions**
+- Automated **testing configuration** using Django’s built-in test runner
 
-- Django 3.x and Django REST Framework (DRF) pre-configured
-- PostgreSQL database integration
-- Docker and Docker Compose configuration for containerization
-- Separation of development and production settings
-- Automatic database setup and migrations using Django's `manage.py` commandss
-- Ready-to-use Django project structure following best practices
-- Simple API endpoint for testing purposes
-- Customizable and extensible to fit your project's needs
+---
 
-## Prerequisites
+## 🚀 Features
 
-Before using this template, ensure that you have the following dependencies installed on your system:
+- Django 4+ and Django REST Framework
+- PostgreSQL support (via `libpq-dev`)
+- Dockerfile for consistent environment setup
+- GitHub Actions workflow for:
+  - Installing dependencies
+  - Running tests
+  - Building and pushing Docker images automatically
+- Clean and extensible project structure
 
-- Docker: [Install Docker](https://www.docker.com/get-started)
-- Docker Compose: [Install Docker Compose](https://docs.docker.com/compose/install/)
+---
 
-## Getting Started
+## 🛠️ Prerequisites
 
-To start a new project using this template, follow these steps:
+Before you begin, make sure you have the following installed locally:
 
-1. Clone this repository to your local machine:
+- **Python 3.9+**
+- **Docker & Docker Compose**
+- **Git**
+- A **DockerHub account** (for image pushing)
 
-```bash
-git clone https://github.com/Palwisha-18/django-drf-template.git
-```
+---
 
-2. Navigate into the `django_project` directory:
+## 📂 Project Structure
 
-```bash
-cd django-drf-template
-cd django_project
-```
-
-3. Set environment variables:
-
-```bash
-cp .env.sample .env
-```
-
-Open the `.env` file and set the value of all environment variables.
-
-4. Build and run the Docker containers:
-
-```bash
-docker-compose up -d --build
-```
-
-This command will download the required Docker images, set up the containers, and start the development server.
-
-5. Access the Django application:
-
-You can access the Django application running on `127.0.0.1:8000` in your web browser.
-
-6. Test the API endpoint:
-
-A sample API endpoint is available at `127.0.0.1:8000/api/app1/home`. You can modify or extend it according to your project's requirements.
-
-## Using this template
-
-- Rename `django_project` folder according to the name of your django project and replace its usage in the project.
-- Rename `app1` to represent the application name in your django project. Similarly, replace its usage in the project.
-- You can add more apps under api directory. For each app added, add app name to `INSTALLED_APPS` in `config/settings/base.py` and add app urls to `api/urls.py`
-
-## Configuration
-
-- **Django Settings**: The project-specific Django settings are located in the `config/settings/` directory. You can modify these files to adjust the project's configuration based on your needs.
-
-- **Database**: By default, this template uses PostgreSQL as the database backend. You can update the database settings in the `docker-compose.yml` and `config/settings/base.py`
-
-- **Docker Configuration**: The Docker configuration files (`Dockerfile` and `docker-compose.yml`) are included in the root directory. If you need to make changes to the container setup or add additional services, you can modify these files accordingly.
-
-## Development Workflow
-
-- During development, you can modify the Django code, and the changes will be automatically detected and applied.
-- To stop the development server and the associated containers, use the following command:
-
-```bash
-docker-compose down
-```
-
-## Deployment
-
-To deploy the project to a production environment, you can use Docker Compose or any other preferred deployment method. Ensure that you update the necessary configurations for a production environment, such as using a secure secret key, configuring HTTPS, and setting up any required production database or caching services.
-
-## Contributing
-
-If you encounter any issues or have suggestions for improvements, feel free to open an issue or submit a pull request.
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
-## Acknowledgements
-
-This project template is inspired by the excellent Django and Docker tutorials and best practices available in the Django and Docker communities.
+django-drf-template/
+│
+├── .github/
+│ └── workflows/
+│ └── ci.yml # GitHub Actions CI/CD pipeline
+│
+├── django_project/
+│ └── config/
+│ └── settings/
+│ └── test.py # Django test settings file
+│
+├── Dockerfile # Docker image definition
+├── entrypoint-simple.sh # Entrypoint script for container startup
+├── requirements.txt # Python dependencies
+├── manage.py # Django management script
+└── README.md
