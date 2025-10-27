@@ -147,7 +147,7 @@ jobs:
         working-directory: ./django_project
         env:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_django_db
-          DJANGO_SETTINGS_MODULE: config.settings
+          DJANGO_SETTINGS_MODULE: config.settings.local
         run: |
           echo "🚀 Running migrations..."
           python manage.py migrate --noinput

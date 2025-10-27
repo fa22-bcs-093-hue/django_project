@@ -76,25 +76,25 @@ WSGI_APPLICATION = "config.wsgi.application"
 # DATABASE CONFIGURATION (Updated for GitHub Actions + Local)
 # ===============================================================
 
-DATABASE_URL = os.getenv('DATABASE_URL')
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
     DATABASES = {
-        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
+        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
 else:
-    # Fallback configuration if DATABASE_URL is not defined
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_NAME', 'test_django_db'),
-            'USER': os.getenv('POSTGRES_USER', 'test_user'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'test_password'),
-            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
-            'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("POSTGRES_NAME", "test_django_db"),
+            "USER": os.getenv("POSTGRES_USER", "test_user"),
+            "PASSWORD": os.getenv("POSTGRES_PASSWORD", "test_password"),
+            "HOST": os.getenv("POSTGRES_HOST", "localhost"),
+            "PORT": os.getenv("POSTGRES_PORT", "5432"),
         }
     }
-
 # ===============================================================
 
 
@@ -129,9 +129,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"]
-}
+REST_FRAMEWORK = {"DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"]}
 
 # Logging configuration
 LOGGING = {
