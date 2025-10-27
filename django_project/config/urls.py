@@ -13,32 +13,29 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+from django.contrib import admin
+from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.http import JsonResponse
-from django.urls import include, path
 
 
 def api_root(request):
     """API root endpoint."""
-    return JsonResponse(
-        {
-            "message": "Welcome to Django REST Framework API",
-            "version": "1.0",
-            "endpoints": {
-                "admin": "/admin/",
-                "api": "/api/",
-                "api_app1": "/api/app1/",
-                "api_app1_home": "/api/app1/home",
-            },
+    return JsonResponse({
+        'message': 'Welcome to Django REST Framework API',
+        'version': '1.0',
+        'endpoints': {
+            'admin': '/admin/',
+            'api': '/api/',
+            'api_app1': '/api/app1/',
+            'api_app1_home': '/api/app1/home'
         }
-    )
+    })
 
 
 urlpatterns = [
-    path("", api_root, name="api_root"),
-    path("admin/", admin.site.urls),
-    path("api/", include("api.urls")),
+    path('', api_root, name='api_root'),
+    path('admin/', admin.site.urls),
+    path('api/', include('api.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

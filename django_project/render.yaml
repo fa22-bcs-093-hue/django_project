@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: django-drf-app
+    env: docker
+    dockerfilePath: ./DockerFile
+    dockerContext: .
+    plan: starter
+    region: oregon
+    envVars:
+      - key: SECRET_KEY
+        value: your-production-secret-key-here
+      - key: DEBUG
+        value: False
+      - key: POSTGRES_USER
+        value: django_user
+      - key: POSTGRES_NAME
+        value: django_db
+      - key: POSTGRES_PASSWORD
+        value: your-production-db-password
+      - key: POSTGRES_HOST
+        value: your-db-host
+      - key: POSTGRES_PORT
+        value: 5432
+    healthCheckPath: /
+    autoDeploy: true
+    branch: main
+
+databases:
+  - name: django-postgres
+    plan: starter
+    region: oregon
+    postgresMajorVersion: 13
