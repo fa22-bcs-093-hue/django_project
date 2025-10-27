@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
-from rest_framework.test import APITestCase
 from rest_framework import status
+from rest_framework.test import APITestCase
 
 
 class App1TestCase(APITestCase):
@@ -41,9 +41,7 @@ class App1BasicTestCase(TestCase):
     def test_app1_imports(self):
         """Test that app1 modules can be imported."""
         try:
-            from api.app1 import views
-            from api.app1 import urls
-            from api.app1 import models
+            from api.app1 import models, urls, views
             self.assertTrue(True)
         except ImportError as e:
             self.fail(f"Failed to import app1 modules: {e}")
