@@ -41,6 +41,7 @@ jobs:
           python --version
           pip list
           python manage.py check --deploy
+        working-directory: ./django_project
 
   lint-and-security:
     name: Lint & Security Scan
@@ -138,11 +139,13 @@ jobs:
         env:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_django_db
         run: python manage.py migrate --settings=config.settings.test
+        working-directory: ./django_project
 
       - name: Run tests with coverage
         env:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_django_db
         run: pytest --cov=. --cov-report=xml --cov-report=html --junitxml=test-results.xml
+        working-directory: ./django_project
 
       - name: Upload coverage reports
         uses: actions/upload-artifact@v3
