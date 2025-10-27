@@ -17,11 +17,12 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-SECRET_KEY = "django-insecure-abc123def456ghi789jkl012mno345pqr678stu901vwx234yz5678901234567890"
+SECRET_KEY = (
+    "django-insecure-abc123def456ghi789jkl012mno345pqr678stu901vwx234yz5678901234567890"
+)
 DEBUG = True
 
 # Application definition
@@ -69,12 +70,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-
 # ===============================================================
 # DATABASE CONFIGURATION (Updated for GitHub Actions + Local)
 # ===============================================================
-
-DATABASE_URL = os.getenv("DATABASE_URL")
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -91,8 +89,8 @@ else:
             "PORT": os.getenv("POSTGRES_PORT", "5432"),
         }
     }
-# ===============================================================
 
+# ===============================================================
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -110,7 +108,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
@@ -118,14 +115,15 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-REST_FRAMEWORK = {"DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"]}
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"]
+}
 
 # Logging configuration
 LOGGING = {

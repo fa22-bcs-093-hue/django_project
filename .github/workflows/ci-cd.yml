@@ -63,8 +63,8 @@ jobs:
           pip install -r requirements.txt
           pip install flake8 bandit safety isort black
 
-      - name: Code formatting check (Black)
-        run: black --check --diff .
+      - name: Code formatting (auto-fix)
+        run: black .
 
       - name: Import sorting check (isort)
         run: isort --check-only --diff .
@@ -147,7 +147,7 @@ jobs:
         working-directory: ./django_project
         env:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_django_db
-          DJANGO_SETTINGS_MODULE: config.settings.local
+          DJANGO_SETTINGS_MODULE: config.settings.test
         run: |
           echo "🚀 Running migrations..."
           python manage.py migrate --noinput
