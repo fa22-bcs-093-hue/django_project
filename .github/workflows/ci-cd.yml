@@ -130,16 +130,19 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          while ! pg_isready -h localhost -p 5432 -U test_user; do
-            echo "Waiting for PostgreSQL..."
+          echo "⏳ Waiting for PostgreSQL to be ready..."
+          until pg_isready -h localhost -p 5432 -U test_user; do
             sleep 2
           done
+          echo "✅ PostgreSQL is ready!"
 
       - name: Run migrations
+        working-directory: ./django_project
         env:
           DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_django_db
-        run: python manage.py migrate --settings=config.settings.test
-        working-directory: ./django_project
+          DJANGO_SETTINGS_MODULE: config.settings.test
+        run: |
+          python manage.py migrate --noinput
 
       - name: Run tests with coverage
         env:

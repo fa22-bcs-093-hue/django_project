@@ -4,18 +4,15 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def app1_root(request):
     """App1 root endpoint."""
-    return Response({
-        'message': 'App1 API Endpoints',
-        'endpoints': {
-            'home': '/api/app1/home'
-        }
-    })
+    return Response(
+        {"message": "App1 API Endpoints", "endpoints": {"home": "/api/app1/home"}}
+    )
 
 
 urlpatterns = [
-    path('', app1_root, name='app1_root'),
-    path('home', home_view, name='home')
+    path("", app1_root, name="app1_root"),
+    path("home", home_view, name="home"),
 ]
