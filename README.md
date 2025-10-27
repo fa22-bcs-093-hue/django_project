@@ -8,7 +8,7 @@ This repository serves as a template for creating a Django REST Framework (DRF) 
 - PostgreSQL database integration
 - Docker and Docker Compose configuration for containerization
 - Separation of development and production settings
-- Automatic database setup and migrations using Django's `manage.py` commands
+- Automatic database setup and migrations using Django's `manage.py` commandss
 - Ready-to-use Django project structure following best practices
 - Simple API endpoint for testing purposes
 - Customizable and extensible to fit your project's needs
@@ -62,6 +62,7 @@ You can access the Django application running on `127.0.0.1:8000` in your web br
 A sample API endpoint is available at `127.0.0.1:8000/api/app1/home`. You can modify or extend it according to your project's requirements.
 
 ## Using this template
+
 - Rename `django_project` folder according to the name of your django project and replace its usage in the project.
 - Rename `app1` to represent the application name in your django project. Similarly, replace its usage in the project.
 - You can add more apps under api directory. For each app added, add app name to `INSTALLED_APPS` in `config/settings/base.py` and add app urls to `api/urls.py`
