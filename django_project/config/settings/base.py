@@ -21,9 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-SECRET_KEY = (
-    "django-insecure-abc123def456ghi789jkl012mno345pqr678stu901vwx234yz5678901234567890"
-)
+SECRET_KEY = "django-insecure-abc123def456ghi789jkl012mno345pqr678stu901vwx234yz5678901234567890"
 DEBUG = True
 
 # Application definition
@@ -81,9 +79,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)
-    }
+    DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
 else:
     DATABASES = {
         "default": {

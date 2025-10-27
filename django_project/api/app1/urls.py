@@ -7,9 +7,7 @@ from rest_framework.response import Response
 @api_view(["GET"])
 def app1_root(request):
     """App1 root endpoint."""
-    return Response(
-        {"message": "App1 API Endpoints", "endpoints": {"home": "/api/app1/home"}}
-    )
+    return Response({"message": "App1 API Endpoints", "endpoints": {"home": "/api/app1/home"}})
 
 
 urlpatterns = [
