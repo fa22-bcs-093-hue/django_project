@@ -11,7 +11,6 @@ env:
   DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/django-drf-template
 
 jobs:
-  # Stage 1: Build & Install
   build-and-install:
     name: Build & Install
     runs-on: ubuntu-latest
@@ -43,7 +42,6 @@ jobs:
           pip list
           python manage.py check --deploy
 
-  # Stage 2: Lint/Security Scan
   lint-and-security:
     name: Lint & Security Scan
     runs-on: ubuntu-latest
@@ -94,7 +92,6 @@ jobs:
             bandit-report.json
             safety-report.json
 
-  # Stage 3: Test (with DB service)
   test:
     name: Test with Database
     runs-on: ubuntu-latest
@@ -156,7 +153,6 @@ jobs:
             htmlcov/
             test-results.xml
 
-  # Stage 4: Build & Push Docker Image (Docker Hub)
   build-docker:
     name: Build & Push Docker Image
     runs-on: ubuntu-latest
@@ -181,14 +177,13 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./DockerFile
+          file: ./Dockerfile
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
 
       - name: Show Docker Image Info
         run: docker images ${{ env.DOCKER_IMAGE }}
 
-  # Stage 5: Deploy (Conditional)
   deploy:
     name: Deploy to Production
     runs-on: ubuntu-latest
@@ -217,7 +212,6 @@ jobs:
       - name: Notify
         run: echo "✅ Deployment completed successfully!"
 
-  # Cleanup
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
