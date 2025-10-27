@@ -20,15 +20,8 @@ DATABASES = {
     }
 }
 
-# Disable migrations for faster tests
-class DisableMigrations:
-    def __contains__(self, item):
-        return True
-    
-    def __getitem__(self, item):
-        return None
-
-MIGRATION_MODULES = DisableMigrations()
+# Use regular migrations for tests
+# MIGRATION_MODULES = DisableMigrations()
 
 # Disable password hashing for faster tests
 PASSWORD_HASHERS = [

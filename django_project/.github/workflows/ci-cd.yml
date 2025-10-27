@@ -162,13 +162,19 @@ jobs:
           sleep 2
         done
         
+    - name: Create test database
+      env:
+        PGPASSWORD: test_password
+      run: |
+        createdb -h localhost -U test_user test_django_db || echo "Database might already exist"
+        
     - name: Run database migrations
       env:
         DATABASE_URL: postgresql://test_user:test_password@localhost:5432/test_django_db
         SECRET_KEY: test-secret-key-for-testing
         DEBUG: True
       run: |
-        python manage.py migrate --settings=config.settings.test
+        python manage.py migrate --settings=config.settings.test --run-syncdb
         
     - name: Run tests with coverage
       env:

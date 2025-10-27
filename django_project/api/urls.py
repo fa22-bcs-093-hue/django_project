@@ -1,7 +1,8 @@
-from django.urls import path, include
-from api.app1 import urls as app1_urls
-from rest_framework.response import Response
+from django.urls import include, path
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from api.app1 import urls as app1_urls
 
 
 @api_view(['GET'])
