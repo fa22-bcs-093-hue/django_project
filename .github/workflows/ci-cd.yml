@@ -194,7 +194,7 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v5
         with:
-          context: ./django-drf-template/django-drf-templat
+          context: ./django-drf-template/django-drf-template
           file: ./django-drf-template/django-drf-template/Dockerfile
           push: true
           tags: ${{ env.DOCKER_IMAGE }}:latest
