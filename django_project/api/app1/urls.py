@@ -1,7 +1,7 @@
-from django.urls import include, path
 from api.app1.views import home_view
-from rest_framework.response import Response
+from django.urls import include, path
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 
 @api_view(["GET"])
