@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +21,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# Hardcoded SECRET_KEY for this project
 SECRET_KEY = (
     "django-insecure-abc123def456ghi789jkl012mno345pqr678stu901vwx234yz5678901234567890"
 )
@@ -72,27 +72,33 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# Database - Hardcoded settings
-POSTGRES_USER = "django_user"
-POSTGRES_NAME = "django_db"
-POSTGRES_PASSWORD = "django_password"
-POSTGRES_HOST = "web_app_db"
-POSTGRES_PORT = "5432"
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": POSTGRES_NAME,
-        "USER": POSTGRES_USER,
-        "PASSWORD": POSTGRES_PASSWORD,
-        "HOST": POSTGRES_HOST,
-        "PORT": POSTGRES_PORT,
-    },
-}
+# ===============================================================
+# DATABASE CONFIGURATION (Updated for GitHub Actions + Local)
+# ===============================================================
+
+DATABASE_URL = os.getenv('DATABASE_URL')
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
+    }
+else:
+    # Fallback configuration if DATABASE_URL is not defined
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_NAME', 'test_django_db'),
+            'USER': os.getenv('POSTGRES_USER', 'test_user'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'test_password'),
+            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+            'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        }
+    }
+
+# ===============================================================
 
 
 # Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -110,38 +116,24 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"]
 }
 
 # Logging configuration
-
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -156,12 +148,8 @@ LOGGING = {
         },
     },
     "filters": {
-        "require_debug_false": {
-            "()": "django.utils.log.RequireDebugFalse",
-        },
-        "require_debug_true": {
-            "()": "django.utils.log.RequireDebugTrue",
-        },
+        "require_debug_false": {"()": "django.utils.log.RequireDebugFalse"},
+        "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
     },
     "handlers": {
         "console": {
@@ -174,7 +162,7 @@ LOGGING = {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "api.log",
-            "maxBytes": 1024 * 1024 * 5,  # 5 mb
+            "maxBytes": 1024 * 1024 * 5,  # 5 MB
             "backupCount": 5,
             "formatter": "verbose",
         },
@@ -182,7 +170,7 @@ LOGGING = {
             "level": "ERROR",
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "api_error.log",
-            "maxBytes": 1024 * 1024 * 5,  # 5 mb
+            "maxBytes": 1024 * 1024 * 5,  # 5 MB
             "backupCount": 5,
             "formatter": "verbose",
         },

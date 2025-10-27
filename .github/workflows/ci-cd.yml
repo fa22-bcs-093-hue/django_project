@@ -81,8 +81,8 @@ jobs:
 
       - name: Security scan with safety
         run: |
-          safety check --json --output safety-report.json || true
-          safety check
+          safety scan --output=json --output-file=safety-report.json || true
+          safety scan --output=screen
 
       - name: Upload security reports
         uses: actions/upload-artifact@v4
