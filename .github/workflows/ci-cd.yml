@@ -216,16 +216,41 @@ jobs:
         run: |
           echo "🚀 Deploying latest image..."
           docker pull ${{ env.DOCKER_IMAGE }}:latest
-          docker run -d -p 8000:8000 --name django_app ${{ env.DOCKER_IMAGE }}:latest
+          docker run -d -p 8000:8000 --name django_app \
+            -e DJANGO_SETTINGS_MODULE=config.settings.production \
+            -e DATABASE_URL=sqlite:////tmp/db.sqlite3 \
+            -e SECRET_KEY=github-actions-test-key-not-for-real-production \
+            -e DEBUG=False \
+            -e ALLOWED_HOSTS=localhost,127.0.0.1 \
+            ${{ env.DOCKER_IMAGE }}:latest
 
       - name: Show Running Containers
         run: docker ps -a
 
+      - name: Wait for Container to Start
+        run: |
+          echo "⏳ Waiting for Django to start..."
+          for i in {1..30}; do
+            if docker ps | grep django_app | grep -q "Up"; then
+              echo "✅ Container is running"
+              sleep 5
+              break
+            fi
+            echo "Waiting... ($i/30)"
+            sleep 2
+          done
+
+      - name: Check Container Logs
+        if: always()
+        run: |
+          echo "📋 Container logs:"
+          docker logs django_app || true
+
       - name: Health Check
         run: |
           echo "🔍 Checking health..."
-          sleep 10
-          curl -f http://localhost:8000/ || exit 1
+          sleep 5
+          curl -f http://localhost:8000/ || (docker logs django_app && exit 1)
 
       - name: Notify
         run: echo "✅ Deployment completed successfully!"
