@@ -28,7 +28,7 @@ services:
     container_name: django-backend
     build:
       context: .
-      dockerfile: DockerFile
+      dockerfile: Dockerfile
     entrypoint: /entrypoint.sh
     ports:
       - "8000:8000"
@@ -47,7 +47,7 @@ services:
   frontend:
     container_name: django-frontend
     build:
-      context: .
+      context: ./django_project
       dockerfile: Dockerfile.frontend
     ports:
       - "3000:3000"
