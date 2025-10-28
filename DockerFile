@@ -29,8 +29,8 @@ RUN pip install --no-cache-dir --upgrade pip \
 # Copy project
 COPY . /django_project/
 
-# Copy entrypoint script
-COPY entrypoint-simple.sh /entrypoint.sh
+# Copy entrypoint script from django_project subdirectory
+COPY django_project/entrypoint-simple.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Create directories for static and media files
