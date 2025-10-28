@@ -2,8 +2,8 @@
 
 echo "Starting Django application..."
 
-# Change to the project directory
-cd /django_project
+# Change to the django_project directory where manage.py is located
+cd /django_project/django_project
 
 # Run migrations
 echo "Running migrations..."
