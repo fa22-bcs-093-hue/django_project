@@ -32,7 +32,7 @@ Before you begin, make sure you have the following installed locally:
 
 ---
 
-## Project Structure
+## Project Structuree
 
 django-drf-template/
 │
