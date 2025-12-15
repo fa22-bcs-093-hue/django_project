@@ -8,15 +8,11 @@ from .base import *
 DEBUG = True
 SECRET_KEY = 'test-secret-key-for-testing-only'
 
-# Use in-memory database for faster tests
+# Use SQLite in-memory database for faster tests (no server needed)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'test_django_db',
-        'USER': 'test_user',
-        'PASSWORD': 'test_password',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',
     }
 }
 
