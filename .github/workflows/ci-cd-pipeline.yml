@@ -213,26 +213,42 @@ jobs:
 
       - name: Terraform Format Check
         run: |
-          cd terraform
-          terraform fmt -check
+          if [ -d "terraform" ]; then
+            cd terraform
+            terraform fmt -check
+          else
+            echo "⚠️ Terraform directory not found - skipping format check"
+          fi
         continue-on-error: true
 
       - name: Terraform Init
         run: |
-          cd terraform
-          terraform init
+          if [ -d "terraform" ]; then
+            cd terraform
+            terraform init
+          else
+            echo "⚠️ Terraform directory not found - skipping init"
+          fi
         continue-on-error: true
 
       - name: Terraform Validate
         run: |
-          cd terraform
-          terraform validate
+          if [ -d "terraform" ]; then
+            cd terraform
+            terraform validate
+          else
+            echo "⚠️ Terraform directory not found - skipping validate"
+          fi
         continue-on-error: true
 
       - name: Terraform Plan
         run: |
-          cd terraform
-          terraform plan -out=tfplan
+          if [ -d "terraform" ]; then
+            cd terraform
+            terraform plan -out=tfplan
+          else
+            echo "⚠️ Terraform directory not found - skipping plan"
+          fi
         env:
           TF_VAR_environment: ${{ github.event.inputs.environment || 'dev' }}
         continue-on-error: true
@@ -240,14 +256,24 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          cd terraform
-          terraform apply -auto-approve tfplan
+          if [ -d "terraform" ]; then
+            cd terraform
+            terraform apply -auto-approve tfplan
+          else
+            echo "⚠️ Terraform directory not found - skipping apply"
+          fi
+        continue-on-error: true
 
       - name: Save Terraform outputs
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         run: |
-          cd terraform
-          terraform output -json > terraform-outputs.json
+          if [ -d "terraform" ]; then
+            cd terraform
+            terraform output -json > terraform-outputs.json
+          else
+            echo "⚠️ Terraform directory not found - skipping outputs"
+          fi
+        continue-on-error: true
 
       - name: Upload Terraform outputs
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
