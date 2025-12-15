@@ -1,0 +1,43 @@
+name: Nightly Build
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # Run at 2 AM UTC daily
+  workflow_dispatch:
+
+jobs:
+  nightly-tests:
+    name: Nightly Full Test Suite
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install -r django_project/requirements.txt
+          pip install pytest pytest-cov
+
+      - name: Run comprehensive tests
+        run: |
+          cd django_project
+          pytest --cov=. --cov-report=html
+        env:
+          DATABASE_URL: sqlite:///db.sqlite3
+          SECRET_KEY: test-key
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./django_project/htmlcov/index.html
+        continue-on-error: true

@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database Servicee
+  web_app_db:
+    restart: always
+    container_name: web-app-db
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=django_user
+      - POSTGRES_DB=django_db
+      - POSTGRES_PASSWORD=django_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./django_project/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U django_user -d django_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - django_network
+
+  # Django Backend Servicee
+  django_backend:
+    container_name: django-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: /entrypoint.sh
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/django_project
+      - static_volume:/django_project/static
+      - media_volume:/django_project/media
+    depends_on:
+      web_app_db:
+        condition: service_healthy
+    restart: on-failure
+    networks:
+      - django_network
+
+  # Frontend Service (if needed for future expansion)
+  frontend:
+    container_name: django-frontend
+    build:
+      context: ./django_project
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    networks:
+      - django_network
+    profiles:
+      - frontend
+
+volumes:
+  postgres_data:
+    driver: local
+  static_volume:
+    driver: local
+  media_volume:
+    driver: local
+
+networks:
+  django_network:
+    driver: bridge

@@ -1,0 +1,55 @@
+---
+- name: Automate Docker Build and Push
+  hosts: localhost
+  gather_facts: yes
+
+  vars:
+    docker_image_name: django-drf-app
+    docker_image_tag: latest
+    dockerfile_path: "{{ playbook_dir }}/../../Dockerfile"
+    build_context: "{{ playbook_dir }}/../.."
+
+  tasks:
+    - name: Check if Dockerfile exists
+      stat:
+        path: "{{ dockerfile_path }}"
+      register: dockerfile_stat
+
+    - name: Fail if Dockerfile not found
+      fail:
+        msg: "Dockerfile not found at {{ dockerfile_path }}"
+      when: not dockerfile_stat.stat.exists
+
+    - name: Build Docker image
+      docker_image:
+        name: "{{ docker_image_name }}"
+        tag: "{{ docker_image_tag }}"
+        build:
+          path: "{{ build_context }}"
+          dockerfile: Dockerfile
+        source: build
+        state: present
+      register: docker_build
+
+    - name: Display build result
+      debug:
+        msg: "Docker image built successfully: {{ docker_image_name }}:{{ docker_image_tag }}"
+      when: docker_build.changed
+
+    - name: Get Docker images list
+      command: docker images {{ docker_image_name }}
+      register: docker_images
+
+    - name: Display Docker images
+      debug:
+        msg: "{{ docker_images.stdout_lines }}"
+
+    - name: Tag image for local Kubernetes
+      command: docker tag {{ docker_image_name }}:{{ docker_image_tag }} {{ docker_image_name }}:latest
+      when: docker_build.changed
+
+    - name: Create Docker network for app
+      docker_network:
+        name: django-network
+        state: present
+      ignore_errors: yes

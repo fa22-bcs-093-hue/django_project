@@ -1,0 +1,110 @@
+---
+# Main Ansible Playbook for Django DRF Application Deployment
+# Task 3 Deliverables: Configuration Management with Ansible
+# 1. Install dependencies on Kubernetes nodes
+# 2. Deploy application configurations and secrets
+# 3. Automate Docker and Kubernetes deployment
+
+- name: Deploy Django Application to Kubernetes
+  hosts: local
+  gather_facts: no
+  vars:
+    app_name: django-app
+    docker_image: django-drf-app
+    image_tag: latest
+    namespace: default
+    k8s_manifests_dir: "../k8s"
+
+  tasks:
+    - name: Verify Docker is installed and running
+      win_shell: docker --version
+      register: docker_check
+      changed_when: false
+
+    - name: Display Docker version
+      debug:
+        msg: "✓ Docker installed: {{ docker_check.stdout.strip() }}"
+
+    - name: Verify kubectl is installed
+      win_shell: kubectl version --client --short
+      register: kubectl_check
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Display kubectl version
+      debug:
+        msg: "✓ kubectl installed: {{ kubectl_check.stdout.strip() }}"
+      when: kubectl_check.rc == 0
+
+    - name: Check Kubernetes cluster connectivity
+      win_shell: kubectl cluster-info
+      register: cluster_check
+      changed_when: false
+
+    - name: Display cluster status
+      debug:
+        msg: "✓ Kubernetes cluster is running"
+
+    - name: Verify Docker image exists
+      win_shell: docker images {{ docker_image }}:{{ image_tag }} --format "{{.Repository}}:{{.Tag}}"
+      register: image_check
+      changed_when: false
+
+    - name: Display Docker image status
+      debug:
+        msg: "✓ Docker image found: {{ image_check.stdout.strip() }}"
+
+    - name: Deploy ConfigMap to Kubernetes
+      win_shell: kubectl apply -f {{ k8s_manifests_dir }}/configmap.yaml
+      register: configmap_result
+
+    - name: Display ConfigMap deployment status
+      debug:
+        msg: "{{ configmap_result.stdout.strip() }}"
+
+    - name: Deploy Secret to Kubernetes
+      win_shell: kubectl apply -f {{ k8s_manifests_dir }}/secret.yaml
+      register: secret_result
+
+    - name: Display Secret deployment status
+      debug:
+        msg: "{{ secret_result.stdout.strip() }}"
+
+    - name: Deploy application to Kubernetes
+      win_shell: kubectl apply -f {{ k8s_manifests_dir }}/deployment.yaml
+      register: deployment_result
+
+    - name: Display Deployment status
+      debug:
+        msg: "{{ deployment_result.stdout.strip() }}"
+
+    - name: Deploy Service to Kubernetes
+      win_shell: kubectl apply -f {{ k8s_manifests_dir }}/service.yaml
+      register: service_result
+
+    - name: Display Service status
+      debug:
+        msg: "{{ service_result.stdout.strip() }}"
+
+    - name: Wait for deployment to be ready
+      win_shell: kubectl rollout status deployment/{{ app_name }} --timeout=60s
+      register: rollout_status
+      ignore_errors: yes
+
+    - name: Get deployment status
+      win_shell: kubectl get deployment {{ app_name }} -o wide
+      register: deployment_status
+      changed_when: false
+
+    - name: Display final deployment status
+      debug:
+        msg: "{{ deployment_status.stdout_lines }}"
+
+    - name: Get all resources
+      win_shell: kubectl get all -l app={{ app_name }}
+      register: all_resources
+      changed_when: false
+
+    - name: Display all deployed resources
+      debug:
+        msg: "{{ all_resources.stdout_lines }}"

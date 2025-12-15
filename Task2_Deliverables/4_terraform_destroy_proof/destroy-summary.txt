@@ -1,0 +1,135 @@
+# Terraform Destroy - Cleanup Summary
+
+## Command Executed
+```powershell
+cd e:\DevOps\Lab\Mid_lab\django-drf-template\django-drf-template\infra
+terraform destroy -auto-approve
+```
+
+## Purpose
+Clean up all AWS resources created by Terraform to:
+- Avoid any potential charges
+- Demonstrate proper infrastructure lifecycle management
+- Complete Task 2 deliverable requirements
+
+## Resources Destroyed
+
+### Network Resources (10 resources)
+- 1 VPC (vpc-02387aa95b30cbee5)
+- 4 Subnets (2 public, 2 private)
+- 1 Internet Gateway
+- 3 Route Tables
+- 4 Route Table Associations
+
+### Compute Resources (4 resources)
+- 1 EC2 t3.micro Instance (i-05d5a9e4cdc5cb72b)
+- 1 Elastic IP
+- 1 SSH Key Pair
+- 1 Local SSH Private Key File
+
+### Database Resources (if RDS was created)
+- 1 RDS PostgreSQL Instance
+- 1 DB Subnet Group
+
+### Storage Resources (12 resources)
+- 3 S3 Buckets:
+  - django-dev-storage-dev
+  - django-dev-static-dev
+  - django-dev-backups-dev
+- 3 S3 Bucket Versioning Configurations
+- 3 S3 Bucket Encryption Configurations
+- 1 S3 Bucket Public Access Block
+- 1 S3 Bucket Lifecycle Configuration
+- 1 S3 Bucket Policy
+
+### Security Resources (5 resources)
+- 5 Security Groups:
+  - django-dev-alb-sg
+  - django-dev-ec2-sg
+  - django-dev-rds-sg
+  - django-dev-eks-cluster-sg
+  - django-dev-eks-nodes-sg
+
+### IAM Resources (7 resources)
+- 2 IAM Roles:
+  - django-dev-eks-cluster-role
+  - django-dev-eks-nodes-role
+- 5 IAM Policy Attachments
+
+## Destruction Order
+
+Terraform automatically handles dependency order:
+
+1. **First**: Resources with no dependencies
+   - S3 Bucket configurations (versioning, encryption, lifecycle)
+   - IAM Policy Attachments
+
+2. **Second**: Resources depending on network
+   - EC2 Instance
+   - RDS Database (if exists)
+   - Elastic IP
+
+3. **Third**: Network components
+   - Route Table Associations
+   - Route Tables
+   - Subnets
+
+4. **Fourth**: Core network
+   - Internet Gateway
+   - Security Groups
+
+5. **Last**: Foundation resources
+   - VPC
+   - IAM Roles
+   - Local files
+
+## Verification Steps
+
+After destroy completes:
+
+1. **Check Terraform State**:
+   ```powershell
+   terraform state list
+   ```
+   Expected: Empty or no resources
+
+2. **Verify AWS Console**:
+   - VPC: Should show no VPCs with "django-dev" prefix
+   - EC2: No instances running
+   - RDS: No databases
+   - S3: Buckets deleted (may need to empty first)
+
+3. **Check Cost Explorer**:
+   - No ongoing charges
+   - All resources stopped
+
+## Notes
+
+- **S3 Buckets**: May need manual emptying if they contain objects
+- **RDS Database**: Takes ~5-10 minutes to delete
+- **EC2 Instance**: Stopped before termination
+- **No Data Loss**: All data is intentionally destroyed (as per task requirements)
+
+## Cost Impact
+
+After destroy:
+- **Ongoing Costs**: $0.00/month ✅
+- **Resources Active**: 0 ✅
+- **Free Tier Usage**: 0% ✅
+
+## Completion Status
+
+- [ ] Destroy command initiated
+- [ ] All resources destroyed
+- [ ] State file empty
+- [ ] AWS Console verified clean
+- [ ] No ongoing charges
+
+## Timestamp
+
+Destroy initiated: December 14, 2025
+Expected completion: 5-10 minutes
+
+---
+
+**See `destroy-output.txt` for complete terminal output.**

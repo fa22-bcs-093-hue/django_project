@@ -11,17 +11,33 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Initialize environment variables
+env = environ.Env(
+    DEBUG=(bool, False),
+    SECRET_KEY=(str, 'django-insecure-change-me-in-production'),
+    ALLOWED_HOSTS=(list, ['localhost', '127.0.0.1']),
+)
+
+# Read .env file if it exists
+env_file = os.path.join(BASE_DIR.parent.parent, '.env')
+if os.path.exists(env_file):
+    environ.Env.read_env(env_file)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
-# Hardcoded SECRET_KEY for this project
-SECRET_KEY = 'django-insecure-abc123def456ghi789jkl012mno345pqr678stu901vwx234yz5678901234567890'
-DEBUG = True
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = env('SECRET_KEY')
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = env('DEBUG')
+
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 # Application definition
 
@@ -69,22 +85,56 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database - Hardcoded settings
-POSTGRES_USER = 'django_user'
-POSTGRES_NAME = 'django_db'
-POSTGRES_PASSWORD = 'django_password'
-POSTGRES_HOST = 'web_app_db'
-POSTGRES_PORT = '5432'
+# Database configuration from environment variables
+# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': POSTGRES_NAME,
-        'USER': POSTGRES_USER,
-        'PASSWORD': POSTGRES_PASSWORD,
-        'HOST': POSTGRES_HOST,
-        'PORT': POSTGRES_PORT,
-    },
+        'NAME': env('POSTGRES_DB', default='django_db'),
+        'USER': env('POSTGRES_USER', default='django_user'),
+        'PASSWORD': env('POSTGRES_PASSWORD', default='django_password'),
+        'HOST': env('POSTGRES_HOST', default='web_app_db'),
+        'PORT': env('POSTGRES_PORT', default='5432'),
+    }
 }
+
+# Alternative: Use DATABASE_URL if provided
+if 'DATABASE_URL' in os.environ:
+    import dj_database_url
+    DATABASES['default'] = dj_database_url.config(
+        default=os.environ.get('DATABASE_URL'),
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
+
+
+# Redis Cache Configuration
+# https://docs.djangoproject.com/en/3.2/topics/cache/
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': env('REDIS_URL', default='redis://redis_cache:6379/0'),
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'PASSWORD': env('REDIS_PASSWORD', default=''),
+            'SOCKET_CONNECT_TIMEOUT': 5,
+            'SOCKET_TIMEOUT': 5,
+            'RETRY_ON_TIMEOUT': True,
+            'CONNECTION_POOL_KWARGS': {
+                'max_connections': 50,
+                'retry_on_timeout': True,
+            },
+        },
+        'KEY_PREFIX': 'django_cache',
+        'TIMEOUT': 300,  # 5 minutes default
+    }
+}
+
+# Session configuration - use Redis for sessions
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
 
 
 # Password validation

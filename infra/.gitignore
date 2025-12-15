@@ -1,0 +1,25 @@
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars.backup
+.terraform.lock.hcl
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# SSH Keys (if generated)
+*.pem
+*.pub
+deployer-key*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Sensitive
+secrets.tfvars

@@ -1,0 +1,114 @@
+---
+- name: Deploy Django Application to Kubernetes
+  hosts: localhost
+  gather_facts: yes
+
+  vars:
+    app_name: django-app
+    namespace: default
+    docker_image: django-drf-app
+    replicas: 2
+
+  tasks:
+    - name: Create Kubernetes namespace
+      kubernetes.core.k8s:
+        name: "{{ namespace }}"
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Create ConfigMap for Django settings
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: django-config
+            namespace: "{{ namespace }}"
+          data:
+            DJANGO_SETTINGS_MODULE: "config.settings.production"
+            DATABASE_NAME: "django_db"
+            ALLOWED_HOSTS: "*"
+
+    - name: Create Secret for sensitive data
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: django-secrets
+            namespace: "{{ namespace }}"
+          type: Opaque
+          stringData:
+            SECRET_KEY: "your-secret-key-here-change-in-production"
+            DATABASE_PASSWORD: "postgres123"
+
+    - name: Deploy Django application
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: "{{ app_name }}"
+            namespace: "{{ namespace }}"
+            labels:
+              app: "{{ app_name }}"
+          spec:
+            replicas: "{{ replicas }}"
+            selector:
+              matchLabels:
+                app: "{{ app_name }}"
+            template:
+              metadata:
+                labels:
+                  app: "{{ app_name }}"
+              spec:
+                containers:
+                  - name: django
+                    image: "{{ docker_image }}:latest"
+                    imagePullPolicy: Never
+                    ports:
+                      - containerPort: 8000
+                    envFrom:
+                      - configMapRef:
+                          name: django-config
+                      - secretRef:
+                          name: django-secrets
+                    resources:
+                      requests:
+                        memory: "256Mi"
+                        cpu: "250m"
+                      limits:
+                        memory: "512Mi"
+                        cpu: "500m"
+
+    - name: Create Service for Django app
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: "{{ app_name }}-service"
+            namespace: "{{ namespace }}"
+          spec:
+            type: LoadBalancer
+            selector:
+              app: "{{ app_name }}"
+            ports:
+              - protocol: TCP
+                port: 80
+                targetPort: 8000
+
+    - name: Wait for deployment to be ready
+      kubernetes.core.k8s_info:
+        kind: Deployment
+        namespace: "{{ namespace }}"
+        name: "{{ app_name }}"
+      register: deployment
+      until: deployment.resources[0].status.availableReplicas == replicas
+      retries: 10
+      delay: 10

@@ -1,0 +1,47 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  validate:
+    name: Validate Pull Request
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+
+      - name: Install dependencies
+        run: |
+          pip install -r django_project/requirements.txt
+          pip install pytest flake8 black
+
+      - name: Run tests
+        run: |
+          cd django_project
+          python manage.py test --settings=config.settings.test
+        env:
+          DATABASE_URL: sqlite:///db.sqlite3
+          SECRET_KEY: test-key
+
+      - name: Check code formatting
+        run: |
+          black --check django_project/
+
+      - name: Lint code
+        run: |
+          flake8 django_project/ --max-line-length=120 --exclude=migrations
+
+      - name: PR size check
+        run: |
+          files_changed=$(git diff --name-only origin/${{ github.base_ref }}...HEAD | wc -l)
+          if [ $files_changed -gt 50 ]; then
+            echo "⚠️ This PR changes $files_changed files. Consider breaking it into smaller PRs."
+          fi

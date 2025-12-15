@@ -1,0 +1,48 @@
+﻿database_connection_string = <sensitive>
+ec2_instance_ids = tolist([
+  "i-05d5a9e4cdc5cb72b",
+])
+ec2_private_ips = tolist([
+  "10.0.1.158",
+])
+ec2_public_ips = tolist([
+  "13.62.249.253",
+])
+ec2_security_group = "sg-0a4c6c8923b0d1eff"
+eks_cluster_security_group = "sg-0395e7802352696dd"
+eks_cluster_security_group_id = "sg-0395e7802352696dd"
+eks_nodes_security_group = "sg-04d0d7c6053f32102"
+infrastructure_summary = {
+  "ec2_instance_count" = 1
+  "eks_cluster_name" = "N/A"
+  "eks_enabled" = false
+  "environment" = "dev"
+  "project_name" = "django-dev"
+  "rds_endpoint" = tostring(null)
+  "region" = "eu-north-1"
+  "s3_backups_bucket" = "django-dev-backups-dev"
+  "s3_static_bucket" = "django-dev-static-dev"
+  "s3_storage_bucket" = "django-dev-storage-dev"
+  "vpc_id" = "vpc-02387aa95b30cbee5"
+}
+kubeconfig_command = "EKS not enabled"
+private_subnet_ids = [
+  "subnet-0f10b419d262ee161",
+  "subnet-0ab9528a8d2569fd6",
+]
+public_subnet_ids = [
+  "subnet-09b42c33116832411",
+  "subnet-0de170a7fa820fcae",
+]
+rds_address = tostring(null)
+rds_database_name = "django_db"
+rds_endpoint = tostring(null)
+rds_port = tonumber(null)
+rds_security_group = "sg-047be3fa0153c1f94"
+rds_username = <sensitive>
+s3_app_storage_arn = "arn:aws:s3:::django-dev-storage-dev"
+s3_app_storage_bucket = "django-dev-storage-dev"
+s3_backups_bucket = "django-dev-backups-dev"
+s3_static_files_bucket = "django-dev-static-dev"
+vpc_cidr = "10.0.0.0/16"
+vpc_id = "vpc-02387aa95b30cbee5"

@@ -1,0 +1,50 @@
+---
+- name: Install Dependencies on Kubernetes Nodes
+  hosts: localhost
+  gather_facts: yes
+
+  tasks:
+    - name: Check if Docker is installed
+      command: docker --version
+      register: docker_version
+      ignore_errors: yes
+
+    - name: Display Docker version
+      debug:
+        msg: "Docker is installed: {{ docker_version.stdout }}"
+      when: docker_version.rc == 0
+
+    - name: Check if Kubernetes is available
+      command: kubectl version --client
+      register: kubectl_version
+      ignore_errors: yes
+
+    - name: Display Kubernetes version
+      debug:
+        msg: "Kubectl is installed: {{ kubectl_version.stdout }}"
+      when: kubectl_version.rc == 0
+
+    - name: Ensure Kubernetes cluster is running
+      command: kubectl cluster-info
+      register: cluster_info
+      ignore_errors: yes
+
+    - name: Display cluster status
+      debug:
+        msg: "{{ cluster_info.stdout }}"
+      when: cluster_info.rc == 0
+
+    - name: Install Python Kubernetes client
+      pip:
+        name:
+          - kubernetes
+          - openshift
+          - pyyaml
+        state: present
+      delegate_to: localhost
+
+    - name: Create required Kubernetes resources directory
+      file:
+        path: "{{ playbook_dir }}/../k8s"
+        state: directory
+        mode: "0755"
